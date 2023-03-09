@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-
 
 function App() {
   const [name, setName] = useState("");
@@ -11,18 +9,32 @@ function App() {
   }
 
   const handleInsertClick = () => {
-    axios.post('/api/insert', { name })
-      .then(response => {
-        setTableData(response.data);
+    fetch("/api/insert", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ name })
+    })
+      .then(response => response.json())
+      .then(data => {
+        setTableData(data);
         setName("");
       })
       .catch(error => console.log(error));
   }
 
   const handleSearchClick = () => {
-    axios.post('/api/search', { name })
-      .then(response => {
-        setTableData(response.data);
+    fetch("/api/search", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ name })
+    })
+      .then(response => response.json())
+      .then(data => {
+        setTableData(data);
         setName("");
       })
       .catch(error => console.log(error));
@@ -51,26 +63,5 @@ function App() {
     </div>
   );
 }
-
-// mock axios requests
-jest.mock('axios');
-
-// mock insert endpoint
-axios.post.mockImplementation((url, data) => {
-  const responseData = [
-    { id: 1, name: "John" },
-    { id: 2, name: "Jane" },
-    { id: 3, name: "Bob" }
-  ];
-  return Promise.resolve({ data: responseData });
-});
-
-// mock search endpoint
-axios.post.mockImplementation((url, data) => {
-  const responseData = [
-    { id: 2, name: "Jane" }
-  ];
-  return Promise.resolve({ data: responseData });
-});
 
 export default App;
